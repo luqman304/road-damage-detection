@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Road Damage Detection</title>
+<style>
+  :root { --bg:#f7f7f5; --fg:#1c1c1a; --muted:#6b6b66; --card:#fff; --line:#e3e3df; --accent:#2563eb;
+          --high:#dc2626; --medium:#f59e0b; --low:#22c55e; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#141413; --fg:#ececea; --muted:#9a9a94; --card:#1f1f1d; --line:#33332f; } }
+  * { box-sizing:border-box } body { margin:0; font:15px/1.5 system-ui,sans-serif; background:var(--bg); color:var(--fg) }
+  main { max-width:1100px; margin:0 auto; padding:24px 16px }
+  h1 { font-size:22px; margin:0 0 4px } p.sub { color:var(--muted); margin:0 0 20px }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px }
+  .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center }
+  label { color:var(--muted); font-size:13px } input[type=range]{ width:120px }
+  button { background:var(--accent); color:#fff; border:0; border-radius:8px; padding:9px 16px; font-weight:600; cursor:pointer }
+  button:disabled { opacity:.5 }
+  .grid { display:grid; grid-template-columns: minmax(0,3fr) minmax(0,2fr); gap:16px; margin-top:16px }
+  @media (max-width:800px){ .grid{ grid-template-columns:1fr } }
+  img { max-width:100%; border-radius:8px; display:block }
+  .kpis { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:12px }
+  .kpi b { display:block; font-size:24px } .kpi span { color:var(--muted); font-size:12px }
+  table { width:100%; border-collapse:collapse; font-size:13px } td,th { padding:6px 4px; border-bottom:1px solid var(--line); text-align:left }
+  .pill { padding:2px 8px; border-radius:99px; color:#fff; font-size:12px; font-weight:600 }
+  .high{background:var(--high)} .medium{background:var(--medium)} .low{background:var(--low)}
+  a { color:var(--accent) } .err { color:var(--high) }
+</style>
+</head>
+<body>
+<main>
+  <h1>Road Damage Detection</h1>
+  <p class="sub">YOLO11 trained on RDD2022 · detects longitudinal / transverse / alligator cracks and potholes and scores severity.
+    API docs: <a href="/docs">/docs</a> · model metrics: <a href="/metrics">/metrics</a></p>
+  <div class="card row">
+    <input type="file" id="file" accept="image/*">
+    <label>conf <input type="range" id="conf" min="0.05" max="0.9" step="0.05" value="0.25"> <span id="confv">0.25</span></label>
+    <button id="go">Analyse</button>
+    <span id="status"></span>
+  </div>
+  <div class="grid" id="out" hidden>
+    <div class="card"><img id="annot" alt="Annotated result"></div>
+    <div class="card">
+      <div class="kpis">
+        <div class="kpi"><b id="rci">–</b><span>Road Condition Index (0–100)</span></div>
+        <div class="kpi"><b id="rating">–</b><span>Condition</span></div>
+        <div class="kpi"><b id="ndet">–</b><span>Defects found</span></div>
+        <div class="kpi"><b id="action" style="font-size:15px">–</b><span>Recommended action</span></div>
+      </div>
+      <table><thead><tr><th>Defect</th><th>Conf</th><th>Severity</th></tr></thead><tbody id="tbody"></tbody></table>
+    </div>
+  </div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+$('conf').oninput = e => $('confv').textContent = e.target.value;
+$('go').onclick = async () => {
+  const f = $('file').files[0];
+  if (!f) { $('status').textContent = 'Choose an image first'; return; }
+  $('go').disabled = true; $('status').textContent = 'Running…'; $('status').className = '';
+  const q = `?conf=${$('conf').value}`;
+  const fd = () => { const d = new FormData(); d.append('file', f); return d; };
+  try {
+    const [jr, ir] = await Promise.all([fetch('/predict'+q,{method:'POST',body:fd()}), fetch('/predict/image'+q,{method:'POST',body:fd()})]);
+    if (!jr.ok) throw new Error((await jr.json()).detail || jr.statusText);
+    const r = await jr.json();
+    $('annot').src = URL.createObjectURL(await ir.blob());
+    $('rci').textContent = r.road_condition_index; $('rating').textContent = r.condition_rating;
+    $('ndet').textContent = r.num_detections; $('action').textContent = r.recommended_action;
+    $('tbody').innerHTML = r.detections.map(d =>
+      `<tr><td>${d.class_name.replace('_',' ')}</td><td>${d.confidence.toFixed(2)}</td>
+       <td><span class="pill ${d.severity_level}">${d.severity_level} ${d.severity_score}</span></td></tr>`).join('')
+      || '<tr><td colspan="3">No damage detected</td></tr>';
+    $('out').hidden = false; $('status').textContent = `${r.inference_ms} ms`;
+  } catch (e) { $('status').textContent = e.message; $('status').className = 'err'; }
+  $('go').disabled = false;
+};
+</script>
+</body>
+</html>

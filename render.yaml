@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: road-damage-detection
+    runtime: docker
+    plan: free
+    rootDir: app
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
