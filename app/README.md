@@ -22,7 +22,7 @@ to detect four road-surface defect classes, plus a severity score per defect and
 | POST | `/predict/image` | Annotated JPEG (boxes coloured by severity), summary in `X-Road-Condition` header |
 
 ```bash
-curl -F "file=@road.jpg" "https://road-damage-detection.onrender.com/predict?conf=0.25"
+curl -F "file=@road.jpg" "https://road-damage-detection-le7h.onrender.com/predict?conf=0.25"
 ```
 
 ## Severity scoring

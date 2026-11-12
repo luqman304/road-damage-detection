@@ -4,7 +4,7 @@ End-to-end road-damage detector: dataset preparation, YOLO11 training on RDD2022
 evaluation (mAP@0.5, per-class, per-country), severity scoring, and a Dockerised FastAPI
 service deployed on Render.
 
-**Live API:** https://road-damage-detection.onrender.com  ·  docs: `/docs`  ·  metrics: `/metrics`
+**Live API:** https://road-damage-detection-le7h.onrender.com  ·  docs: `/docs`  ·  metrics: `/metrics`
 (free tier — first request after 15 min idle takes ~1 min to wake)
 
 ## Results
