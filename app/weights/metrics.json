@@ -1,13 +1,84 @@
 {
-  "status": "interim checkpoint - training in progress (final per-class metrics will replace this)",
   "model": "YOLO11n",
+  "weights": "best.pt",
   "dataset": "RDD2022 (6 countries, Norway excluded)",
-  "epoch": 9,
-  "epochs_total": 25,
+  "val_images": 4530,
+  "train_images": 25694,
+  "imgsz": 640,
   "overall": {
-    "precision": 0.4924,
-    "recall": 0.4296,
-    "mAP50": 0.4239,
-    "mAP50_95": 0.1948
+    "precision": 0.6237,
+    "recall": 0.5585,
+    "mAP50": 0.5951,
+    "mAP50_95": 0.296
+  },
+  "per_class": {
+    "longitudinal_crack": {
+      "precision": 0.6003,
+      "recall": 0.6359,
+      "mAP50": 0.649,
+      "mAP50_95": 0.3544
+    },
+    "transverse_crack": {
+      "precision": 0.5772,
+      "recall": 0.6057,
+      "mAP50": 0.6065,
+      "mAP50_95": 0.2862
+    },
+    "alligator_crack": {
+      "precision": 0.7055,
+      "recall": 0.6178,
+      "mAP50": 0.6867,
+      "mAP50_95": 0.358
+    },
+    "pothole": {
+      "precision": 0.6118,
+      "recall": 0.3747,
+      "mAP50": 0.4381,
+      "mAP50_95": 0.1853
+    }
+  },
+  "per_country": {
+    "China_Drone": {
+      "images": 360,
+      "precision": 0.6484,
+      "recall": 0.5735,
+      "mAP50": 0.6212,
+      "mAP50_95": 0.3191
+    },
+    "China_MotorBike": {
+      "images": 296,
+      "precision": 0.8433,
+      "recall": 0.7714,
+      "mAP50": 0.8582,
+      "mAP50_95": 0.4882
+    },
+    "Czech": {
+      "images": 424,
+      "precision": 0.5162,
+      "recall": 0.3982,
+      "mAP50": 0.3956,
+      "mAP50_95": 0.1528
+    },
+    "India": {
+      "images": 1155,
+      "precision": 0.3948,
+      "recall": 0.3357,
+      "mAP50": 0.3489,
+      "mAP50_95": 0.1533
+    },
+    "Japan": {
+      "images": 1575,
+      "precision": 0.5711,
+      "recall": 0.517,
+      "mAP50": 0.5227,
+      "mAP50_95": 0.2378
+    },
+    "United_States": {
+      "images": 720,
+      "precision": 0.5429,
+      "recall": 0.5794,
+      "mAP50": 0.5639,
+      "mAP50_95": 0.3174
+    }
   }
 }
