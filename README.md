@@ -7,6 +7,20 @@ service deployed on Render.
 **Live API:** https://road-damage-detection-le7h.onrender.com  ·  docs: `/docs`  ·  metrics: `/metrics`
 (free tier — first request after 15 min idle takes ~1 min to wake)
 
+## Screenshots
+
+The live app spotting potholes. Boxes are coloured by severity (green = low, amber = medium, red = high).
+
+![Web app detecting potholes and alligator cracking on a Japanese street](docs/app_pothole.jpg)
+
+![Web app detecting two potholes on an Indian road](docs/app_pothole_india.jpg)
+
+More pothole detections from the live API (held-out validation images from Japan and India):
+
+![Grid of six pothole detections](docs/examples/pothole_grid.jpg)
+
+Try it yourself with the images in [`samples/`](samples/).
+
 ## Results
 
 Validation split: 4,530 images / 6,516 defects (15% held out per country). YOLO11n, 640 px, 25 epochs
